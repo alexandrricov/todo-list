@@ -1,11 +1,11 @@
 import React, { PropTypes, PureComponent } from 'react';
-import Firebase from './Firebase';
-import './App.css';
+import { connect } from 'react-redux';
+import { removeItem, toggleDone, updateItemTitle } from './reducers/items';
 
-const ViewItem = ({ title, toggleDone, toggleEdit }) => (
+const ViewItem = ({ title, toggleDone, toggleEdit, userCanEdit }) => (
   <div>
     <div onClick={toggleDone}>{title}</div>
-    <button onClick={toggleEdit}>edit</button>
+    { userCanEdit && <button onClick={toggleEdit}>edit</button> }
   </div>
 );
 
@@ -26,13 +26,9 @@ class EditItem extends PureComponent {
     })
   };
 
-  save = () => {
-    Firebase.updateItem(this.props.id, {
-      title: this.state.editTitle,
-    })
-      .then(this.props.toggleEdit)
-      .then(console.info)
-      .catch(console.error);
+  save = (e) => {
+    e.preventDefault();
+    this.props.updateItemTitle(this.state.editTitle);
   };
 
   render() {
@@ -46,7 +42,7 @@ class EditItem extends PureComponent {
   }
 }
 
-export default class Todo extends PureComponent {
+class Todo extends PureComponent {
   static propTypes = {
     title: PropTypes.string,
     isDone: PropTypes.bool,
@@ -58,11 +54,13 @@ export default class Todo extends PureComponent {
   };
 
   toggleDone = () => {
-    Firebase.updateItem(this.props.id, {
-      isDone: !this.props.isDone,
-    })
-      .then(console.info)
-      .catch(console.error);
+    const { toggleDone, id, isDone, userUID } = this.props;
+
+    const userCanEdit = !!userUID;
+
+    if (userCanEdit) {
+      toggleDone(id, !isDone);
+    }
   };
 
   toggleEdit = () => {
@@ -72,22 +70,35 @@ export default class Todo extends PureComponent {
   };
 
   removeItem = () => {
-    Firebase.removeItem(this.props.id)
-      .then(console.info)
-      .catch(console.error);
+    this.props.removeItem(this.props.id);
+  };
+
+  updateItemTitle = (newTitle) => {
+    this.props.updateItemTitle(this.props.id, newTitle)
+      .then(this.toggleEdit);
   };
 
   render() {
-    const { title, isDone, id } = this.props;
+    const { item, id, user } = this.props;
+
+    const uid = user ? user.uid : null;
+    const userCanEdit = !!uid && uid === item.uid;
 
     return (
-      <li style={{ textDecoration: isDone ? 'line-through' : '' }}>
+      <li style={{ textDecoration: item.isDone ? 'line-through' : '' }}>
         { this.state.isEdit
-          ? <EditItem id={id} title={title} toggleEdit={this.toggleEdit} />
-          : <ViewItem title={title} toggleDone={this.toggleDone} toggleEdit={this.toggleEdit} />
+          ? <EditItem id={id} title={item.title} updateItemTitle={this.updateItemTitle} toggleEdit={this.toggleEdit} />
+          : <ViewItem title={item.title} toggleDone={this.toggleDone} toggleEdit={this.toggleEdit} userCanEdit={userCanEdit} />
         }
-        <button onClick={this.removeItem}>remove</button>
+        { userCanEdit && <button onClick={this.removeItem}>remove</button> }
       </li>
     );
   }
 }
+
+export default connect(
+  state => ({
+    user: state.auth.user,
+  }),
+  { removeItem, toggleDone, updateItemTitle },
+)(Todo);

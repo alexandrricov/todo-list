@@ -1,53 +1,40 @@
 import React, { PureComponent } from 'react';
-import Firebase from './Firebase';
+import { connect } from 'react-redux';
+import { signIn, signOut } from './reducers/auth';
+import './Header.css';
 
+const User = ({ user }) => (
+  <div className="Header__user">
+    <img src={user.photoURL} alt={user.displayName} className="Header__user-icon"/>
+    <div>
+      <div>{user.displayName}</div>
+      <div>{user.email}</div>
+    </div>
+  </div>
+);
 
-export default class Header extends PureComponent {
-  state = {
-    name: '',
-    email: '',
-    token: '',
-  };
-
-  signIn = () => {
-    Firebase.signIn().then(({ token, displayName, email }) => {
-      this.setState({
-        token,
-        name: displayName,
-        email,
-      })
-    });
-  };
-
-  signOut = () => {
-    Firebase.signOut()
-      .then(this.setState({ name: '', email: '', token: '' }))
-      .catch(error => console.error('An error happened on sign out', error));
-  };
-
-  // onSignIn(googleUser) {
-  //   var profile = googleUser.getBasicProfile();
-  //   console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  //   console.log('Name: ' + profile.getName());
-  //   console.log('Image URL: ' + profile.getImageUrl());
-  //   console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  // }
-
-  // signOut() {
-  //   var auth2 = gapi.auth2.getAuthInstance();
-  //   auth2.signOut().then(function () {
-  //     console.log('User signed out.');
-  //   });
-  // }
-
+class Header extends PureComponent {
   render() {
+    const { user } = this.props.auth;
+
     return (
-      <header>
-        <button onClick={this.signIn}>Sign in</button>
-        <button onClick={this.signOut}>Sign out</button>
-        <div>{this.state.name}</div>
-        <div>{this.state.email}</div>
+      <header className="Header__container">
+        { user
+          ? <User user={user} />
+          : null
+        }
+        { user
+          ? <button onClick={this.props.signOut} className="Header__button">Sign out</button>
+          : <button onClick={this.props.signIn} className="Header__button">Sign in</button>
+        }
       </header>
     );
   }
 }
+
+export default connect(
+  state => ({
+    auth: state.auth,
+  }),
+  { signIn, signOut },
+)(Header);

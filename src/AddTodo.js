@@ -1,16 +1,17 @@
 import React, { PureComponent } from 'react';
-import Firebase from './Firebase';
+import { connect } from 'react-redux';
+import { addItem } from './reducers/items';
+import './AddTodo.css';
 
-export default class AddTodo extends PureComponent {
+class AddTodo extends PureComponent {
   state = {
     text: '',
   };
 
   onSubmit = e => {
     e.preventDefault();
-    Firebase.addItem(this.state.text)
-      .then(console.info)
-      .catch(console.error);
+
+    this.props.addItem(this.state.text);
     this.setState({ text: '' })
   };
 
@@ -21,11 +22,24 @@ export default class AddTodo extends PureComponent {
   };
 
   render() {
+    const { user } = this.props.auth;
+
+    if (!user) {
+      return null;
+    }
+
     return (
-      <form onSubmit={this.onSubmit}>
-        <input type="text" value={this.state.text} onChange={this.onTextEnter}/>
+      <form onSubmit={this.onSubmit} className="AddTodo__form">
+        <input type="text" value={this.state.text} onChange={this.onTextEnter}  className="AddTodo__input" />
         <button type="submit">add</button>
       </form>
     );
   }
 }
+
+export default connect(
+  state => ({
+    auth: state.auth,
+  }),
+  { addItem },
+)(AddTodo);

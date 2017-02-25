@@ -1,0 +1,20 @@
+.Header__container {
+  border-bottom: 1px solid #000;
+  display: flex;
+  align-items: flex-start;
+  padding: var(--size-medium);
+}
+
+.Header__button {
+  margin-left: auto;
+}
+
+.Header__user {
+  display: flex;
+  align-items: center;
+}
+
+.Header__user-icon {
+  width: 50px;
+  border-radius: 50%;
+}

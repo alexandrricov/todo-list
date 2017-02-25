@@ -13,25 +13,18 @@ firebase.initializeApp(config);
 const provider = new firebase.auth.GoogleAuthProvider();
 
 export default class Firebase {
-  static userObject = null;
-
-  static get user() {
-    return this.userObject;
-  }
-
-  static set user(newUser) {
-    this.userObject = newUser
-  }
-
   static signIn() {
     return new Promise((resolve, reject) => {
-      firebase.auth().signInWithPopup(provider).then(function(result) {
-        resolve({
-          token: result.credential.accessToken,
-          email: result.user.email,
-          displayName: result.user.displayName,
-        });
-      }).catch(reject);
+      firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+          console.info(result);
+
+          resolve({
+            token: result.credential.accessToken,
+            user: result.user,
+          });
+        })
+        .catch(reject);
     });
   }
 
@@ -48,13 +41,14 @@ export default class Firebase {
     });
   }
 
-  static addItem(text) {
+  static addItem({ text, uid }) {
     const ref = firebase.database().ref('items');
     const newChildRef = ref.push();
     return newChildRef.set({
       isDone: false,
       title: text,
       date: (new Date()).toISOString(),
+      uid,
     });
   }
 

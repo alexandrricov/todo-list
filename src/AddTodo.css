@@ -1,0 +1,8 @@
+.AddTodo__form {
+  display: flex;
+}
+
+.AddTodo__input {
+  display: block;
+  flex-grow: 1;
+}
