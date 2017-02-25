@@ -7,6 +7,7 @@
 
 .Header__button {
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .Header__user {
@@ -17,4 +18,5 @@
 .Header__user-icon {
   width: 50px;
   border-radius: 50%;
+  margin-right: var(--size-medium);
 }
