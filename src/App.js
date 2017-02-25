@@ -17,7 +17,7 @@ class App extends PureComponent {
       <div className="App">
         <Header />
         <AddTodo />
-        <ul>
+        <ul className="App__items">
           { this.props.items.itemIds.map(itemId =>
             <Todo
               key={itemId}

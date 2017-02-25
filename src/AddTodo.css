@@ -1,4 +1,12 @@
 .AddTodo__form {
+  padding: var(--size-medium);
+}
+
+.AddTodo__heading {
+  margin: 0;
+}
+
+.AddTodo__inputWrapper {
   display: flex;
 }
 

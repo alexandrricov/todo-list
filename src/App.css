@@ -1,3 +1,8 @@
 :root {
   --size-medium: 8px;
 }
+
+.App__items {
+  padding: 0 var(--size-medium);
+  margin: 0;
+}

@@ -30,8 +30,11 @@ class AddTodo extends PureComponent {
 
     return (
       <form onSubmit={this.onSubmit} className="AddTodo__form">
-        <input type="text" value={this.state.text} onChange={this.onTextEnter}  className="AddTodo__input" />
-        <button type="submit">add</button>
+        <label className="AddTodo__heading" htmlFor="addTodo">Add todo</label>
+        <div className="AddTodo__inputWrapper">
+          <input type="text" value={this.state.text} onChange={this.onTextEnter}  className="AddTodo__input" id="addTodo" />
+          <button type="submit">add</button>
+        </div>
       </form>
     );
   }

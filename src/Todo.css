@@ -1,0 +1,29 @@
+.Todo__container {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--size-medium) 0;
+}
+
+.Todo__container + .Todo__container {
+  border-top: 1px dotted #000;
+}
+
+.ViewItem__container {
+  display: flex;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.ViewItem__title {
+  flex-grow: 1;
+}
+
+.EditItem__container {
+  display: flex;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.EditItem__input {
+  flex-grow: 1;
+}
