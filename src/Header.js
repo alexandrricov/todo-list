@@ -1,6 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { signIn, signOut } from './reducers/auth';
+import { listenItems, clearItems } from './reducers/items';
 import './Header.css';
 
 const User = ({ user }) => (
@@ -22,6 +23,18 @@ class Header extends PureComponent {
     user: PropTypes.object,
     signIn: PropTypes.func,
     signOut: PropTypes.func,
+    listenItems: PropTypes.func,
+    clearItems: PropTypes.func,
+  };
+
+  signIn = () => {
+    this.props.signIn()
+      .then(this.props.listenItems);
+  };
+
+  signOut = () => {
+    this.props.signOut()
+      .then(this.props.clearItems);
   };
 
   render() {
@@ -34,8 +47,8 @@ class Header extends PureComponent {
           : null
         }
         { user
-          ? <button onClick={this.props.signOut} className="Header__button">Sign out</button>
-          : <button onClick={this.props.signIn} className="Header__button">Sign in</button>
+          ? <button onClick={this.signOut} className="Header__button">Sign out</button>
+          : <button onClick={this.signIn} className="Header__button">Sign in</button>
         }
       </header>
     );
@@ -46,5 +59,5 @@ export default connect(
   state => ({
     user: state.auth.user,
   }),
-  { signIn, signOut },
+  { signIn, signOut, listenItems, clearItems },
 )(Header);

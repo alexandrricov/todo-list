@@ -39,7 +39,7 @@ export const checkLogged = () => {
 
 export const signIn = () => {
   return dispatch => {
-    Firebase.signIn().then(user => {
+    return Firebase.signIn().then(user => {
       dispatch({
         type: SET_USER,
         user: user,
@@ -50,7 +50,7 @@ export const signIn = () => {
 
 export const signOut = () => {
   return dispatch => {
-    Firebase.signOut().then(() => {
+    return Firebase.signOut().then(() => {
       dispatch({ type: REMOVE_USER });
     });
   }

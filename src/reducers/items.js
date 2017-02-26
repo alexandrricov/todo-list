@@ -44,6 +44,16 @@ export const listenItems = () => {
   }
 };
 
+export const clearItems = () => {
+  return dispatch => {
+    dispatch({
+      type: UPDATE_ITEMS,
+      itemsById: {},
+      itemIds: [],
+    });
+  }
+};
+
 export const addItem = (title) => {
   return (dispatch, getState) => {
     const user = getState().auth.user;
