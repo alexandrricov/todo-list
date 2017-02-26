@@ -20,36 +20,30 @@ export default(state = defaultState, payload) => {
   }
 };
 
+function mapItems(response) {
+  const itemsById = {};
+  const itemIds = [];
+
+  Object.keys(response).forEach(key => {
+    itemsById[key] = response[key];
+    itemIds.push(key);
+  });
+
+  return {
+    itemsById,
+    itemIds,
+  };
+}
+
 export const listenItems = () => {
   return dispatch => {
     return Firebase.listenItems(response => {
-      const itemsById = {};
-      const itemIds = [];
-
       if (response) {
-        Object.keys(response).forEach(key => {
-          const item = response[key];
-          itemsById[key] = item;
-
-          itemIds.push(key);
-        });
-
         dispatch({
           type: UPDATE_ITEMS,
-          itemsById,
-          itemIds,
+          ...mapItems(response),
         })
       }
-    });
-  }
-};
-
-export const clearItems = () => {
-  return dispatch => {
-    dispatch({
-      type: UPDATE_ITEMS,
-      itemsById: {},
-      itemIds: [],
     });
   }
 };
