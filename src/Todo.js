@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { removeItem, toggleDone, updateItemTitle } from './reducers/items';
 import './Todo.css';
 
-const ViewItem = ({ title, toggleDone, toggleEdit, userCanEdit }) => (
+const ViewItem = ({ item, toggleDone, toggleEdit, userCanEdit }) => (
   <div className="ViewItem__container">
-    <div onClick={toggleDone} className="ViewItem__title">{title}</div>
+    <div
+      onClick={toggleDone}
+      className="ViewItem__title"
+      style={{ textDecoration: item.isDone ? 'line-through' : '' }}
+    >{item.title}</div>
     { userCanEdit && <button onClick={toggleEdit}>edit</button> }
   </div>
 );
@@ -48,6 +52,10 @@ class Todo extends PureComponent {
     title: PropTypes.string,
     isDone: PropTypes.bool,
     id: PropTypes.string,
+
+    removeItem: PropTypes.func,
+    toggleDone: PropTypes.func,
+    updateItemTitle: PropTypes.func,
   };
 
   state = {
@@ -86,12 +94,15 @@ class Todo extends PureComponent {
     const userCanEdit = !!uid && uid === item.uid;
 
     return (
-      <li style={{ textDecoration: item.isDone ? 'line-through' : '' }} className="Todo__container">
-        { this.state.isEdit
-          ? <EditItem id={id} title={item.title} updateItemTitle={this.updateItemTitle} toggleEdit={this.toggleEdit} />
-          : <ViewItem title={item.title} toggleDone={this.toggleDone} toggleEdit={this.toggleEdit} userCanEdit={userCanEdit} />
-        }
-        { userCanEdit && <button onClick={this.removeItem}>remove</button> }
+      <li className="Todo__container">
+        <div className="Todo__wrapper">
+          { this.state.isEdit
+            ? <EditItem id={id} title={item.title} updateItemTitle={this.updateItemTitle} toggleEdit={this.toggleEdit} />
+            : <ViewItem item={item} toggleDone={this.toggleDone} toggleEdit={this.toggleEdit} userCanEdit={userCanEdit} />
+          }
+          { userCanEdit && <button onClick={this.removeItem}>remove</button> }
+        </div>
+        { item.displayName && <div className="Todo__author">author: {item.displayName}</div> }
       </li>
     );
   }

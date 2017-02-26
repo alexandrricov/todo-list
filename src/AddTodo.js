@@ -1,9 +1,14 @@
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { addItem } from './reducers/items';
 import './AddTodo.css';
 
 class AddTodo extends PureComponent {
+  static propTypes = {
+    user: PropTypes.object,
+    addItem: PropTypes.func,
+  };
+
   state = {
     text: '',
   };
@@ -22,7 +27,7 @@ class AddTodo extends PureComponent {
   };
 
   render() {
-    const { user } = this.props.auth;
+    const { user } = this.props;
 
     if (!user) {
       return null;
@@ -42,7 +47,7 @@ class AddTodo extends PureComponent {
 
 export default connect(
   state => ({
-    auth: state.auth,
+    user: state.auth.user,
   }),
   { addItem },
 )(AddTodo);

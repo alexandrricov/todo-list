@@ -26,32 +26,39 @@ export const listenItems = () => {
       const itemsById = {};
       const itemIds = [];
 
-      Object.keys(response).forEach(key => {
-        const item = response[key];
-        itemsById[key] = {
-          title: item.title,
-          isDone: item.isDone,
-          uid: item.uid,
-        };
+      if (response) {
+        Object.keys(response).forEach(key => {
+          const item = response[key];
+          itemsById[key] = item;
 
-        itemIds.push(key);
-      });
+          itemIds.push(key);
+        });
 
-      dispatch({
-        type: UPDATE_ITEMS,
-        itemsById,
-        itemIds,
-      })
+        dispatch({
+          type: UPDATE_ITEMS,
+          itemsById,
+          itemIds,
+        })
+      }
     });
   }
 };
 
-export const addItem = (text) => {
+export const addItem = (title) => {
   return (dispatch, getState) => {
     const user = getState().auth.user;
     const uid = user && user.uid;
+    const displayName = user && user.displayName;
 
-    return Firebase.addItem({ text, uid })
+    const fields = {
+      title,
+      uid,
+      displayName,
+      isDone: false,
+      date: (new Date()).toISOString(),
+    };
+
+    return Firebase.addItem(fields)
       .then(console.info)
       .catch(console.error);
   }

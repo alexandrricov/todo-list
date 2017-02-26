@@ -5,22 +5,20 @@ const defaultState = {
   token: null,
 };
 
-const SIGN_IN = 'SIGN_IN';
-const SIGN_OUT = 'SIGN_OUT';
+const SET_USER = 'SET_USER';
+const REMOVE_USER = 'REMOVE_USER';
 
 export default(state = defaultState, payload) => {
   switch (payload.type) {
-    case SIGN_IN:
+    case SET_USER:
       return {
         ...state,
-        token: payload.token,
         user: payload.user,
       };
 
-    case SIGN_OUT:
+    case REMOVE_USER:
       return {
         ...state,
-        token: null,
         user: null,
       };
     default:
@@ -28,13 +26,23 @@ export default(state = defaultState, payload) => {
   }
 };
 
+export const checkLogged = () => {
+  return dispatch => {
+    const user = Firebase.checkLogged();
+
+    dispatch({
+      type: SET_USER,
+      user,
+    });
+  }
+};
+
 export const signIn = () => {
   return dispatch => {
-    Firebase.signIn().then(result => {
+    Firebase.signIn().then(user => {
       dispatch({
-        type: SIGN_IN,
-        token: result.token,
-        user: result.user,
+        type: SET_USER,
+        user: user,
       });
     });
   }
@@ -43,7 +51,7 @@ export const signIn = () => {
 export const signOut = () => {
   return dispatch => {
     Firebase.signOut().then(() => {
-      dispatch({ type: SIGN_OUT });
+      dispatch({ type: REMOVE_USER });
     });
   }
 };

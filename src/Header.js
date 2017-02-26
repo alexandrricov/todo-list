@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { signIn, signOut } from './reducers/auth';
 import './Header.css';
@@ -13,9 +13,19 @@ const User = ({ user }) => (
   </div>
 );
 
+User.propTypes = {
+  user: PropTypes.object,
+};
+
 class Header extends PureComponent {
+  static propTypes = {
+    user: PropTypes.object,
+    signIn: PropTypes.func,
+    signOut: PropTypes.func,
+  };
+
   render() {
-    const { user } = this.props.auth;
+    const { user } = this.props;
 
     return (
       <header className="Header__container">
@@ -34,7 +44,7 @@ class Header extends PureComponent {
 
 export default connect(
   state => ({
-    auth: state.auth,
+    user: state.auth.user,
   }),
   { signIn, signOut },
 )(Header);

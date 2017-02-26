@@ -13,50 +13,67 @@ firebase.initializeApp(config);
 const provider = new firebase.auth.GoogleAuthProvider();
 
 export default class Firebase {
-  static signIn() {
-    return new Promise((resolve, reject) => {
-      firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-          console.info(result);
+  static checkLogged() {
+    const currentUser = firebase.auth().currentUser;
 
-          resolve({
-            token: result.credential.accessToken,
-            user: result.user,
-          });
-        })
-        .catch(reject);
-    });
+    if (currentUser) {
+      return currentUser;
+    } else {
+      for (let key in localStorage) {
+        if (key.startsWith("firebase:authUser:")) {
+          try {
+            return JSON.parse(localStorage.getItem(key));
+          } catch (e) {
+            console.error(e);
+
+            return null;
+          }
+        }
+      }
+
+      return null;
+    }
+  }
+
+  static signIn() {
+    const user = Firebase.checkLogged();
+
+    if (user) {
+      return Promise.resolve(user);
+    }
+
+    return firebase.auth().signInWithPopup(provider)
+      .then(result => result.user)
+      .catch(console.error);
   }
 
   static signOut() {
-    return new Promise((resolve, reject) => {
-      firebase.auth().signOut().then(resolve, reject);
-    });
+    return firebase.auth().signOut()
+      .catch(console.error);
   }
 
   static listenItems(changeCallback) {
-    const rootRef = firebase.database().ref('items');
-    rootRef.on('value', snap => {
+    const ref = firebase.database().ref('items');
+    ref.on('value', snap => {
       changeCallback(snap.val());
     });
   }
 
-  static addItem({ text, uid }) {
+  static addItem(fields) {
     const ref = firebase.database().ref('items');
     const newChildRef = ref.push();
-    return newChildRef.set({
-      isDone: false,
-      title: text,
-      date: (new Date()).toISOString(),
-      uid,
-    });
+
+    return newChildRef.set(fields)
+      .catch(console.error);
   }
 
   static removeItem(id) {
-    return firebase.database().ref('items/' + id).remove();
+    return firebase.database().ref('items/' + id).remove()
+      .catch(console.error);
   }
 
   static updateItem(id, fields) {
     return firebase.database().ref('items/' + id).update(fields)
+      .catch(console.error);
   }
 };

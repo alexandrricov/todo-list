@@ -1,11 +1,21 @@
 .Todo__container {
-  display: flex;
-  align-items: flex-start;
   padding: var(--size-medium) 0;
+  display: block;
 }
 
 .Todo__container + .Todo__container {
   border-top: 1px dotted #000;
+}
+
+.Todo__wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.Todo__author {
+  font-size: 10px;
+  text-align: right;
+  color: gray;
 }
 
 .ViewItem__container {
