@@ -49,9 +49,10 @@ class EditItem extends PureComponent {
 
 class Todo extends PureComponent {
   static propTypes = {
-    title: PropTypes.string,
-    isDone: PropTypes.bool,
+    item: PropTypes.object,
     id: PropTypes.string,
+
+    user: PropTypes.object,
 
     removeItem: PropTypes.func,
     toggleDone: PropTypes.func,
@@ -62,13 +63,20 @@ class Todo extends PureComponent {
     isEdit: false,
   };
 
-  toggleDone = () => {
-    const { toggleDone, id, isDone, userUID } = this.props;
+  canUserEdit() {
+    const { item, user } = this.props;
 
-    const userCanEdit = !!userUID;
+    const uid = user ? user.uid : null;
+    return !!uid && uid === item.uid;
+  }
+
+  toggleDone = () => {
+    const { item, id } = this.props;
+
+    const userCanEdit = this.canUserEdit();
 
     if (userCanEdit) {
-      toggleDone(id, !isDone);
+      this.props.toggleDone(id, !item.isDone);
     }
   };
 
@@ -88,10 +96,9 @@ class Todo extends PureComponent {
   };
 
   render() {
-    const { item, id, user } = this.props;
+    const { item, id } = this.props;
 
-    const uid = user ? user.uid : null;
-    const userCanEdit = !!uid && uid === item.uid;
+    const userCanEdit = this.canUserEdit();
 
     return (
       <li className="Todo__container">
