@@ -1,5 +1,5 @@
 # Demo site url
-https://alrykov.github.io/todo-list/
+https://alexandrricov.github.io/todo-list/
 
 # Available Scripts
 ```bash
